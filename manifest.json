@@ -1,0 +1,28 @@
+{
+  "name": "Hightex Reference Extensions",
+  "description": "A integreted chrome reference extensions for hightex application",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": [
+    "contextMenus",
+    "scripting",
+    "activeTab",
+    "clipboardWrite"
+  ],
+    "host_permissions": [
+    "https://scholar.googleusercontent.com/*"
+  ],
+    "action": {
+    "default_popup": "index.html"
+  },
+   "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts":[
+    {"matches": ["https://scholar.google.com/*"],
+      "js": ["dist/scholar.js"],
+        "run_at":"document_idle"
+    }
+  ]
+
+}

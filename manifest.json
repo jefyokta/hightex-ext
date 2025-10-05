@@ -13,10 +13,10 @@
     "https://scholar.googleusercontent.com/*"
   ],
     "action": {
-    "default_popup": "index.html"
+    "default_popup": "dist/index.html"
   },
    "background": {
-    "service_worker": "background.js"
+    "service_worker": "dist/background.js"
   },
   "content_scripts":[
     {"matches": ["https://scholar.google.com/*"],

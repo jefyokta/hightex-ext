@@ -75,7 +75,6 @@ function IconContainer({
     return val - bounds.x - bounds.width / 2;
   });
 
-  // 🔽 Skala lebih kecil (mirip toolbar Chrome Extension)
   let widthTransform = useTransform(distance, [-150, 0, 150], [28, 40, 28]);
   let heightTransform = useTransform(distance, [-150, 0, 150], [28, 40, 28]);
 

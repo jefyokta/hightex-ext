@@ -9,11 +9,9 @@ export type MessageActionCallback<TR = unknown,TM={action:string}> = (message: T
 
 
 const  fetchBib: MessageActionCallback<string, {url:string}> = async(m,s,res)=>{
-
     try {
           const response = await fetch(m.url)
         const text = await response.text()
-    
         res({
             success:true,
             message:"bib added",

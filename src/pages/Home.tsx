@@ -22,11 +22,8 @@ import {
 } from "@/components/ui/input-group"
 
 export const Home = () => {
-    // const [bib, setBib] = useState<string | false>(false)
-    return <Provider>
-            <BibTexInput></BibTexInput>
+    return  <BibTexInput></BibTexInput>
             
-        </Provider>
 
 
 }

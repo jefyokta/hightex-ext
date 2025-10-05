@@ -9,11 +9,17 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { useState } from "react"
+import { useAuth } from "@/hooks/use-auth"
 
 export function Login({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+  const [user, setUser] = useState({ email: "", password: "" })
+  const { login } = useAuth()
+  
   return (
     <div className={cn("flex flex-col gap-6  w-full", className)} {...props}>
       <Card className="overflow-hidden p-0">
@@ -32,6 +38,9 @@ export function Login({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
+                  onChange={(e) => setUser(prev => ({ ...prev, email: e.target.value }))}
+
+                  value={user.email}
                   required
                 />
               </Field>
@@ -39,11 +48,22 @@ export function Login({
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" required
+                  onChange={(e) => setUser(prev => ({ ...prev, password: e.target.value }))}
+                  value={user.password}
+                />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
-              </Field>            
+                <Button type="submit" disabled={(user.email == '' || user.password == '')} 
+                onClick={async (e) => {
+                  e.preventDefault()
+                  const res = await login(user)
+                  console.log(res)
+                  if (!res.error) {
+                    
+                  }
+                }}>Login</Button>
+              </Field>
             </FieldGroup>
           </form>
         </CardContent>

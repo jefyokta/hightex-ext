@@ -1,4 +1,3 @@
-import { AppLayout } from "@/layouts/app-layout";
 import React, {
   createContext,
   useState,
@@ -6,63 +5,81 @@ import React, {
   type PropsWithChildren,
   type JSX,
   useEffect,
+  useMemo,
 } from "react";
+import { AppLayout } from "@/layouts/app-layout";
+
+type Query = Record<string, string>[];
 
 type URLData = {
-  path: string,
-  query?: Record<string, string>[]
-}
+  path: string;
+  query?: Query;
+};
+
 type Route = {
+  path: string;
   element: JSX.Element;
-} & URLData;
+};
 
-
+type ActiveRoute = Route & { query?: Query };
 
 type RouterContextType = {
   currentPath: URLData;
   navigate: (data: URLData) => void;
-  routes: Route[];
   registerRoute: (route: Route) => void;
+  activeRoute?: ActiveRoute;
 };
 
 const RouterContext = createContext<RouterContextType | null>(null);
 
 export const Routes: React.FC<PropsWithChildren> = ({ children }) => {
   const [routes, setRoutes] = useState<Route[]>([]);
-  const [currentPath, setCurrentPath] = useState<URLData>({ path: "home", query: [] });
+  const [currentPath, setCurrentPath] = useState<URLData>({
+    path: "home",
+    query: [],
+  });
 
-  const [activeRoute, setActiveRoute] = useState<Route | undefined>(routes[0] || undefined)
+  const navigate = (data: URLData) => {
+    setCurrentPath(data)};
 
-  const navigate = ({ path, query }: URLData) => setCurrentPath({ path, query });
-  useEffect(() => {
-    setActiveRoute(routes.find(r => r.path === currentPath.path));
-  }, [currentPath, routes]);
-
-
-  const registerRoute = (route: Route) =>
+  const registerRoute = (route: Route) => {
     setRoutes((prev) => {
-      return [...prev, route]
+      const exists = prev.some((r) => r.path === route.path);
+      return exists ? prev : [...prev, route];
     });
+  };
 
-  const ctx: RouterContextType = { currentPath, navigate, routes, registerRoute };
+  const activeRoute: ActiveRoute | undefined = useMemo(() => {
+    const found = routes.find((r) => r.path === currentPath.path);
+    if (!found) return undefined;
+    return { ...found, query: currentPath.query };
+  }, [routes, currentPath]);
 
+  const ctx: RouterContextType = useMemo(
+    () => ({ currentPath, navigate, registerRoute, activeRoute }),
+    [currentPath, activeRoute]
+  );
 
   return (
     <RouterContext.Provider value={ctx}>
-      {activeRoute
-        ? activeRoute.path.startsWith("auth")
-          ? activeRoute.element
-          : <AppLayout>{activeRoute.element}</AppLayout>
-        : children}
+      {activeRoute ? (
+        activeRoute.path == 'login' ? (
+          activeRoute.element
+        ) : (
+          <AppLayout>{activeRoute.element}</AppLayout>
+        )
+      ) : (
+        children 
+      )}
     </RouterContext.Provider>
   );
 };
 
 export const Route: React.FC<Route> = ({ path, element }) => {
   const router = useContext(RouterContext);
-  React.useEffect(() => {
+  useEffect(() => {
     router?.registerRoute({ path, element });
-  }, []);
+  }, [path, element, router]);
   return null;
 };
 
@@ -70,4 +87,10 @@ export const useNavigate = () => {
   const router = useContext(RouterContext);
   if (!router) throw new Error("useNavigate must be used inside <Routes>");
   return router.navigate;
+};
+
+export const useRoute = () => {
+  const router = useContext(RouterContext);
+  if (!router) throw new Error("useRoute must be used inside <Routes>");
+  return router.activeRoute;
 };

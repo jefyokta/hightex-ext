@@ -1,51 +1,81 @@
-import { config } from "@/config";
+import { route } from "@/config";
 import { useEffect, useState } from "react";
 
-type User<T = {}> = {
+type User = {
   name: string;
   email: string;
-} & T | null;
+  token?: string;
+} | null;
 
 export const useAuth = () => {
   const [user, setUser] = useState<User>(null);
-  // useEffect(() => {
-  //   chrome.storage.session.get("user").then((res) => {
-  //     if (res.user) setUser(res.user);
-  //   });
 
-  //   const listener = (
-  //     changes: Record<string, chrome.storage.StorageChange>,
-  //     areaName: string
-  //   ) => {
-  //     if (areaName === "session" && changes.user) {
-  //       setUser(changes.user.newValue || null);
-  //     }
-  //   };
+  useEffect(() => {
+    chrome.storage.session.get("user").then(({ user }) => {
+      if (user) setUser(user);
+    });
+  }, []);
 
-  //   chrome.storage.onChanged.addListener(listener);
+  const login = async (u: { password: string; email: string }) => {
+    try {
+      const res = await fetch(route("/api/login"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(u),
+      });
 
-  //   return () => {
-  //     chrome.storage.onChanged.removeListener(listener);
-  //   };
-  // }, []);
+      const data = await res.json() as {
+        message?: { user?: { name: string; email: string }; token: string };
+      };
+      console.log(data)
+      if (res.ok) {
+        const user: User = {
+          name: data.message?.user?.name || "",
+          email: data.message?.user?.email || "",
+          token: data.message?.token,
+        };
+        chrome.storage.session.set({ user }).then(() => {
+          chrome.storage.session.get("user").then(result => {
+            setUser(result as User);
+          });
+        });
+        return { message: "ok" };
 
-  const login = async (user: { password: string; email: string }) => {
+      } else {
+        return { error: (data as { error: string }).error || "Login failed" };
+      }
 
-    const res = await fetch(`${config.serverHost}/api/login`, {
-      method: "post",
-      body: JSON.stringify(user)
-    })
-    const data = await res.json() as Promise<{ message: { user: { name: string, email: string }, token: string } }>
-
-    return res.ok
-    // await chrome.storage.session.set({ user: newUser });
-    // setUser(user);
+    } catch {
+      return { error: "No Internet" };
+    }
   };
 
   const logout = async () => {
-    // await chrome.storage.session.remove("user");
+    const { user } = await chrome.storage.session.get("user");
+
+    await fetch(route("/api/logout"), {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${user?.token}`,
+      },
+    });
+
+    await chrome.storage.session.remove("user");
     setUser(null);
+    return true;
   };
 
-  return { user, login, logout };
+  const check = async () => {
+    const { user } = await chrome.storage.session.get("user");
+    if (!user?.token) return false;
+
+    const r = await fetch(route("/api/me"), {
+      headers: {
+        "Authorization": `Bearer ${user.token}`,
+      },
+    });
+    return r.ok;
+  };
+
+  return { user, login, logout, check };
 };

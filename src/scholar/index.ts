@@ -13,8 +13,7 @@ const observer = new MutationObserver(() => {
 
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-
-        chrome.runtime.sendMessage({ action: "fetchBib", url: bibLink.href}, (resp) => {
+      chrome.runtime.sendMessage({ action: "fetchBib", url: bibLink.href}, (resp) => {
         if (!resp) { console.error("No response"); return; }
                if (resp.success) {
                 const toast =document.createElement('div')

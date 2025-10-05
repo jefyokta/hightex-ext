@@ -19,7 +19,7 @@ import type { CiteUtils } from "bibtex.js"
 
 export const Reference: React.FC<{ cite: CiteUtils }> = ({ cite }) => {
     return (
-        <Item variant="outline">
+        <Item variant="outline" size={'sm'}>
             <ItemMedia>
                 <Avatar className="size-10">
                     <AvatarFallback><QuoteIcon /></AvatarFallback>
@@ -48,7 +48,6 @@ export const ReferencesList = () => {
 
         {[1, 2, 2, 2, 2, , 2, 2, , 2, 2, 2, 2, 2, , 2, 2, 2, 2, , 2, 2].map((e, i) => {
             {/* @ts-ignore */ }
-
             return <Reference key={i} />
         })}
 

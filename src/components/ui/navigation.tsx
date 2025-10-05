@@ -15,9 +15,9 @@ export const Tab = () => {
         path: "reference"
 
     }, {
-        title: "references",
+        title: "logout",
         icon: (<LogOut  className="w-full h-full"/>),
-        path: "references"
+        path: "logout"
 
     }];
     return <div className="flex absolute bottom-2 items-center justify-center  w-full">

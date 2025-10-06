@@ -20,7 +20,8 @@
     "service_worker": "dist/background.js"
   },
   "content_scripts":[
-    {"matches": ["https://scholar.google.com/*"],
+    {
+      "matches": ["https://scholar.google.com/*"],
       "js": ["dist/scholar.js"],
         "run_at":"document_idle"
     }

@@ -11,7 +11,7 @@ import {
     InputGroupButton,
     InputGroupInput,
 } from "@/components/ui/input-group";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CiteUtils } from "bibtex.js";
 import { useCite } from "@/hooks/use-current-cite";
 
@@ -39,7 +39,7 @@ export const InputDropdown: React.FC = () => {
     const items: CiteType[] = ["Cite", "Cite Author"];
     const [selected, setSelected] = useState<CiteType>("Cite");
     const [output, setOutput] = useState<string>("");
-    const { cite } = useCite();
+    const { cite, bib } = useCite();
 
     const handleSelect = (type: CiteType) => {
         setSelected(type);
@@ -47,12 +47,15 @@ export const InputDropdown: React.FC = () => {
         const fn = handler[type];
         if (fn) setOutput(fn.handler(cite));
     };
+    useEffect(() => {
+        handleSelect(selected)
+    },[bib])
 
     return (
         <div className="text-xs">
             <InputGroup className="ring-transparent">
 
-                <InputGroupInput placeholder="" value={output} readOnly className="ring-transparent"/>
+                <InputGroupInput placeholder="" value={output} readOnly className="ring-transparent text-xs" />
                 <InputGroupAddon align="inline-end">
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

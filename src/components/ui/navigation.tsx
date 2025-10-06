@@ -20,7 +20,7 @@ export const Tab = () => {
         path: "logout"
 
     }];
-    return <div className="flex absolute bottom-2 items-center justify-center  w-full">
+    return <div className="flex sticky bottom-2 items-center justify-center  w-full">
         <FloatingDock items={links as any} />
     </div>
 }

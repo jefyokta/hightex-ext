@@ -8,14 +8,6 @@ type User = {
 } | null;
 
 export const useAuth = () => {
-  const [user, setUser] = useState<User>(null);
-
-  useEffect(() => {
-    chrome.storage.session.get("user").then(({ user }) => {
-      if (user) setUser(user);
-    });
-  }, []);
-
   const login = async (u: { password: string; email: string }) => {
     try {
       const res = await fetch(route("/api/login"), {
@@ -24,25 +16,23 @@ export const useAuth = () => {
         body: JSON.stringify(u),
       });
 
-      const data = await res.json() as {
-        message?: { user?: { name: string; email: string }; token: string };
+      const {data }= await res.json() as {
+       data:{ user?: { name: string; email: string }; token: string;}
       };
-      console.log(data)
       if (res.ok) {
-        const user: User = {
-          name: data.message?.user?.name || "",
-          email: data.message?.user?.email || "",
-          token: data.message?.token,
+        const userb: User = {
+          name: data.user?.name || "",
+          email: data.user?.email || "",
+          token: data.token,
         };
-        chrome.storage.session.set({ user }).then(() => {
+        chrome.storage.session.set({ user: userb }).then(() => {
           chrome.storage.session.get("user").then(result => {
-            setUser(result as User);
           });
         });
         return { message: "ok" };
 
       } else {
-        return { error: (data as { error: string }).error || "Login failed" };
+        return { error: "Login failed" };
       }
 
     } catch {
@@ -61,7 +51,6 @@ export const useAuth = () => {
     });
 
     await chrome.storage.session.remove("user");
-    setUser(null);
     return true;
   };
 
@@ -77,5 +66,5 @@ export const useAuth = () => {
     return r.ok;
   };
 
-  return { user, login, logout, check };
+  return { login, logout, check };
 };

@@ -11,25 +11,35 @@ const observer = new MutationObserver(() => {
     btn.style.color = "#1565c0";
     btn.style.marginLeft = "8px";
 
-    btn.addEventListener("click", (e) => {
+    btn.addEventListener("click",async (e) => {
       e.preventDefault();
-      chrome.runtime.sendMessage({ action: "fetchBib", url: bibLink.href}, (resp) => {
-        if (!resp) { console.error("No response"); return; }
-               if (resp.success) {
-                const toast =document.createElement('div')
-                toast.style.position = 'fixed'
-                toast.style.right ='10px'
-                toast.style.bottom ='10px'
-                toast.textContent = "Berhasil"
-                document.body.append(toast)
-                setTimeout(() => {
 
-                  toast.remove()
+chrome.runtime.sendMessage({ action: "setUrl", url: bibLink.href}, (resp) => {
+  console.log(resp)
+  if (resp.ok) {
+    chrome.runtime.sendMessage({action:"openPopUp"},(res)=>{
+      if (res?.ok) {
+                console.log(res)
+                if (!resp) { console.error("No response"); return; }
+                 if (resp.ok) {
+                  const toast =document.createElement('div')
+                  toast.style.position = 'fixed'
+                  toast.style.right ='10px'
+                  toast.style.bottom ='10px'
+                  toast.textContent = "Berhasil"
+                  document.body.append(toast)
+                  setTimeout(() => {
+    
+                    toast.remove()
+                    
+                  }, 1000);
                   
-                }, 1000);
-                
+          }
         }
-      });
+      })
+  }
+    });
+    
     });
 
     bibLink.insertAdjacentElement("afterend", btn);

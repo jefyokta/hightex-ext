@@ -9,8 +9,9 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "@/hooks/use-auth"
+import { useNavigate } from "@/route"
 
 export function Login({
   className,
@@ -18,8 +19,18 @@ export function Login({
 }: React.ComponentProps<"div">) {
 
   const [user, setUser] = useState({ email: "", password: "" })
-  const { login } = useAuth()
-  
+  const { login, check } = useAuth()
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    check().then(r => {
+      if (r) {
+        navigate({ path: "home" })
+      }
+    })
+  })
+
   return (
     <div className={cn("flex flex-col gap-6  w-full", className)} {...props}>
       <Card className="overflow-hidden p-0">
@@ -54,15 +65,15 @@ export function Login({
                 />
               </Field>
               <Field>
-                <Button type="submit" disabled={(user.email == '' || user.password == '')} 
-                onClick={async (e) => {
-                  e.preventDefault()
-                  const res = await login(user)
-                  console.log(res)
-                  if (!res.error) {
-                    
-                  }
-                }}>Login</Button>
+                <Button type="submit" disabled={(user.email == '' || user.password == '')}
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    const res = await login(user)
+                    if (!res.error) {
+
+                    }
+                    navigate({path:"home"})
+                  }}>Login</Button>
               </Field>
             </FieldGroup>
           </form>

@@ -15,7 +15,10 @@ import {
     ItemTitle,
 } from "@/components/ui/item"
 import type React from "react"
-import type { CiteUtils } from "bibtex.js"
+import { bibToObject, CiteUtils } from "bibtex.js"
+import { useEffect, useState } from "react"
+import { useCite } from "@/hooks/use-current-cite"
+import { useNavigate } from "@/route"
 
 export const Reference: React.FC<{ cite: CiteUtils }> = ({ cite }) => {
     return (
@@ -26,8 +29,8 @@ export const Reference: React.FC<{ cite: CiteUtils }> = ({ cite }) => {
                 </Avatar>
             </ItemMedia>
             <ItemContent>
-                <ItemTitle>Title</ItemTitle>
-                <ItemDescription>In 2002</ItemDescription>
+                <ItemTitle>{cite.getTitle()}</ItemTitle>
+                <ItemDescription>{cite.formatAuthorname() || ""} In {cite.getCite().data.year || "unkown year"}</ItemDescription>
             </ItemContent>
             <ItemActions>
                 <Button
@@ -44,11 +47,33 @@ export const Reference: React.FC<{ cite: CiteUtils }> = ({ cite }) => {
 }
 
 export const ReferencesList = () => {
+
+    const [reference, setReference] = useState<CiteUtils[]>([])
+    const { getReference } = useCite();
+
+    const to = useNavigate()
+
+    const handler =()=> getReference().then(r => {
+        if (r.bib && !r.error) {
+
+            const cites = bibToObject(r.bib.map(r => r.bib).join("\n"))
+            setReference(cites.map(c => { console.log(c); return new CiteUtils(c) }))
+        }
+        if (r.error) {
+            r.error == 'Unauthenticated.'  && to({path:"login"})
+            
+        }
+        console.log(r)
+    })
+    useEffect(() => {
+
+        handler()
+
+    }, [])
     return <div className="flex flex-col w-full h-[400px] overflow-y-auto space-y-3">
 
-        {[1, 2, 2, 2, 2, , 2, 2, , 2, 2, 2, 2, 2, , 2, 2, 2, 2, , 2, 2].map((e, i) => {
-            {/* @ts-ignore */ }
-            return <Reference key={i} />
+        {reference.length == 0 ? <h1 className="text-center">No data</h1> : reference.map((e, i) => {
+            return <Reference cite={e} key={i} />
         })}
 
 

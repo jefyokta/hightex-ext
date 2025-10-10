@@ -8,7 +8,7 @@ const LoadingContext = createContext<{ setLoading: Dispatch<SetStateAction<boole
 export const LoadingProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [loading, setLoading] = useState(false)
     return <LoadingContext.Provider value={{ setLoading, loading }}>
-        {loading ? <Loading></Loading> : children}
+        <Loading className={loading ? "flex" : "hidden"}></Loading> {children}
     </LoadingContext.Provider>
 
 }

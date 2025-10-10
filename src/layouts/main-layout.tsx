@@ -6,6 +6,6 @@ import type { PropsWithChildren } from "react"
 export const MainLayout: React.FC<PropsWithChildren> = ({ children }) => {
 
     return <LoadingProvider>{children}
-        <Toaster />
+        <Toaster theme="light" />
     </LoadingProvider>
 }

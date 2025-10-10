@@ -10,7 +10,7 @@ mkdirSync(outDir, { recursive: true });
     const result = await Bun.build({
       entrypoints: [src],
       outdir: outDir,
-      minify: true,
+      minify: false,
     });
 
     if (!result.success) {

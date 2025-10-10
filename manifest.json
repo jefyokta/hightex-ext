@@ -8,10 +8,13 @@
     "scripting",
     "activeTab",
     "clipboardWrite",
-    "storage"
+    "storage",
+    "cookies"
   ],
     "host_permissions": [
-    "https://scholar.googleusercontent.com/*"
+    "https://scholar.googleusercontent.com/*",
+    "https://ieeexplore.ieee.org/*"
+
   ],
     "action": {
     "default_popup": "dist/index.html"

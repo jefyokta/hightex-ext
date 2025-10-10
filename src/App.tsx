@@ -1,10 +1,10 @@
 
 import "./index.css";
 import { AppLayout } from "./layouts/app-layout";
-import { Home } from "./pages/Home";
-import { Login } from "./pages/Login";
-import { LogOut } from "./pages/Logout";
-import { Reference } from "./pages/Reference";
+import { Home } from "./pages/home";
+import { Login } from "./pages/login";
+import { LogOut } from "./pages/logout";
+import { Reference } from "./pages/reference";
 import { Route, Routes } from "./route";
 
 export function App() {

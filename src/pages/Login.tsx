@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/hooks/use-auth"
 import { useNavigate } from "@/route"
+import { toast } from "sonner"
 
 export function Login({
   className,
@@ -48,7 +49,7 @@ export function Login({
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="xxxxxx@students.uin-suska.ac.id"
                   onChange={(e) => setUser(prev => ({ ...prev, email: e.target.value }))}
 
                   value={user.email}
@@ -69,8 +70,11 @@ export function Login({
                   onClick={async (e) => {
                     e.preventDefault()
                     const res = await login(user)
-                    if (!res.error) {
-
+                    if (res.error) {
+                      toast.error(res.error,{
+                        position:"top-center"
+                      })
+                      return
                     }
                     navigate({path:"home"})
                   }}>Login</Button>

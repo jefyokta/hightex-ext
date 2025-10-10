@@ -15,9 +15,9 @@ function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
 }
 
 
-export function Loading() {
+export function Loading({className}:{className?:string}) {
   return (
-    <div className="flex flex-col justify-center w-full h-[650px] items-center gap-4">
+    <div className={` flex-col justify-center fixed w-full h-[650px] items-center gap-4 ${className}`}>
       <Button  disabled size="sm">
         <Spinner />
         Processing

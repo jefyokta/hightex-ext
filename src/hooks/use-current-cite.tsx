@@ -6,8 +6,8 @@ type CurrentCiteContextType = {
   bib: string;
   setBib: React.Dispatch<React.SetStateAction<string>>;
   cite?: CiteUtils;
-  store: () => Promise<Response>,
-  getReference: () => Promise<{ bib?: {bib:string}[],error?:string }>
+  store: () => Promise<Response >,
+  getReference: () => Promise<{ bib?: { bib: string }[], error?: string }>
 };
 
 export const CurrentCiteContext = createContext<CurrentCiteContextType>({
@@ -23,6 +23,8 @@ export const Provider: React.FC<PropsWithChildren> = ({ children }) => {
   const [bib, setBib] = useState("");
   const [cite, setCite] = useState<CiteUtils>();
   const store = async () => {
+
+    console.log(bib)
     return chrome.storage.session.get("user").then(r => {
       return fetch(route("/api/reference"), {
         method: "post",
